@@ -2,7 +2,7 @@ package dangerous
 
 import (
 	"crypto/hmac"
-	"crypto/sha256"
+	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
 	"strings"
@@ -15,7 +15,7 @@ type Signer interface {
 }
 
 // GenericSigner is the first and simple signer that is sufficient for simple applications. This signer
-// takes a key of sufficient length. It will generate the signature based on HMAC+SHA256.
+// takes a key of sufficient length. It will generate the signature based on HMAC+SHA1.
 type GenericSigner struct {
 	key []byte
 }
@@ -34,12 +34,12 @@ func (gs *GenericSigner) b64Decode(message string) ([]byte, error) {
 }
 
 func (gs *GenericSigner) computeSignature(message string) []byte {
-	h := hmac.New(sha256.New, gs.key)
+	h := hmac.New(sha1.New, gs.key)
 	h.Write([]byte(message))
 	return h.Sum(nil)
 }
 
-// Sign will compute the HMAC-SHA256 signature of the given message. The message and signature are then individually
+// Sign will compute the HMAC-SHA1 signature of the given message. The message and signature are then individually
 // base64 encoded and concatenated by a period.
 func (gs *GenericSigner) Sign(message string) string {
 	signature := gs.computeSignature(message)

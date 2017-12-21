@@ -22,7 +22,7 @@ func TestNewGenericSigner(t *testing.T) {
 func TestGenericSigner_Sign(t *testing.T) {
 	key := "testing"
 	message := "hello"
-	signedMessage := "aGVsbG8=.+JOUrYi7eQZbEMBgqnN8bCkdk5B7zuq5hqZ933+dsak="
+	signedMessage := "aGVsbG8=.8jTp+A58ZOwEIoPSkPQc/eUPf6k="
 
 	signer := &GenericSigner{key: []byte(key)}
 
@@ -36,7 +36,7 @@ func TestGenericSigner_Sign(t *testing.T) {
 func TestGenericSigner_Verify(t *testing.T) {
 	key := "testing"
 	message := "hello"
-	signedMessage := "aGVsbG8=.+JOUrYi7eQZbEMBgqnN8bCkdk5B7zuq5hqZ933+dsak="
+	signedMessage := "aGVsbG8=.8jTp+A58ZOwEIoPSkPQc/eUPf6k="
 
 	signer := &GenericSigner{key: []byte(key)}
 
