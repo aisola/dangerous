@@ -7,6 +7,7 @@ into the wild. When you get the data back, you can easily check that the data wa
 
 Internally, dangerous uses HMAC and SHA1 for signing by default.
 
+**This software is considered unstable and should be used as such. The API may change at any time.** 
 
 ## Installation
 
