@@ -2,6 +2,7 @@ package dangerous
 
 import (
 	"bytes"
+	"crypto/sha1"
 	"testing"
 )
 
@@ -17,6 +18,54 @@ func TestNewGenericSigner(t *testing.T) {
 	if !bytes.Equal(genericSigner.key, key) {
 		t.Errorf("expected %v, got %v", key, genericSigner.key)
 	}
+
+	// MD5
+	signer = NewMD5Signer("testing")
+
+	genericSigner, ok = signer.(*GenericSigner)
+	if !ok {
+		t.Errorf("expected *GenericSigner, got %T", signer)
+	}
+
+	if !bytes.Equal(genericSigner.key, key) {
+		t.Errorf("expected %v, got %v", key, genericSigner.key)
+	}
+
+	// SHA 1
+	signer = NewSHA1Signer("testing")
+
+	genericSigner, ok = signer.(*GenericSigner)
+	if !ok {
+		t.Errorf("expected *GenericSigner, got %T", signer)
+	}
+
+	if !bytes.Equal(genericSigner.key, key) {
+		t.Errorf("expected %v, got %v", key, genericSigner.key)
+	}
+
+	// SHA 256
+	signer = NewSHA256Signer("testing")
+
+	genericSigner, ok = signer.(*GenericSigner)
+	if !ok {
+		t.Errorf("expected *GenericSigner, got %T", signer)
+	}
+
+	if !bytes.Equal(genericSigner.key, key) {
+		t.Errorf("expected %v, got %v", key, genericSigner.key)
+	}
+
+	// SHA 512
+	signer = NewSHA512Signer("testing")
+
+	genericSigner, ok = signer.(*GenericSigner)
+	if !ok {
+		t.Errorf("expected *GenericSigner, got %T", signer)
+	}
+
+	if !bytes.Equal(genericSigner.key, key) {
+		t.Errorf("expected %v, got %v", key, genericSigner.key)
+	}
 }
 
 func TestGenericSigner_Sign(t *testing.T) {
@@ -24,7 +73,7 @@ func TestGenericSigner_Sign(t *testing.T) {
 	message := "hello"
 	signedMessage := "aGVsbG8=.8jTp+A58ZOwEIoPSkPQc/eUPf6k="
 
-	signer := &GenericSigner{key: []byte(key)}
+	signer := &GenericSigner{key: []byte(key), hashFunc: sha1.New}
 
 	signedData := signer.Sign(message)
 
@@ -38,7 +87,7 @@ func TestGenericSigner_Verify(t *testing.T) {
 	message := "hello"
 	signedMessage := "aGVsbG8=.8jTp+A58ZOwEIoPSkPQc/eUPf6k="
 
-	signer := &GenericSigner{key: []byte(key)}
+	signer := &GenericSigner{key: []byte(key), hashFunc: sha1.New}
 
 	unsignedData, err := signer.Verify(signedMessage)
 	if err != nil {
@@ -54,7 +103,7 @@ func TestGenericSigner_Verify_MessageNotBase64(t *testing.T) {
 	key := "testing"
 	signedMessage := "aG||VsbG8=.+JOUrYi7eQZbEMBgqnN8bCkdk5B7zuq5hqZ933+dsak="
 
-	signer := &GenericSigner{key: []byte(key)}
+	signer := &GenericSigner{key: []byte(key), hashFunc: sha1.New}
 
 	unsignedData, err := signer.Verify(signedMessage)
 	if err != ErrInvalidSignature {
@@ -70,7 +119,7 @@ func TestGenericSigner_Verify_TamperedMessage(t *testing.T) {
 	key := "testing"
 	signedMessage := "aGVsbG93b3JsZA==.+JOUrYi7eQZbEMBgqnN8bCkdk5B7zuq5hqZ933+dsak="
 
-	signer := &GenericSigner{key: []byte(key)}
+	signer := &GenericSigner{key: []byte(key), hashFunc: sha1.New}
 
 	unsignedData, err := signer.Verify(signedMessage)
 	if err != ErrInvalidSignature {
