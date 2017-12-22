@@ -2,9 +2,13 @@ package dangerous
 
 import (
 	"crypto/hmac"
+	"crypto/md5"
 	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base64"
 	"fmt"
+	"hash"
 	"strings"
 )
 
@@ -15,14 +19,43 @@ type Signer interface {
 }
 
 // GenericSigner is the first and simple signer that is sufficient for simple applications. This signer
-// takes a key of sufficient length. It will generate the signature based on HMAC+SHA1.
+// takes a key of sufficient length. It will generate the signature using HMAC and a which ever hash function is chosen
+// on creation.
 type GenericSigner struct {
-	key []byte
+	key      []byte
+	hashFunc func() hash.Hash
 }
 
-// NewGenericSigner creates a new standard signer with the given key.
+// NewGenericSigner creates a new Signer with the given key using the SHA1 hash function.
 func NewGenericSigner(key string) Signer {
-	return &GenericSigner{key: []byte(key)}
+	return NewSHA1Signer(key)
+}
+
+// NewMD5Signer creates a new Signer with the given key using the MD5 hash function.
+func NewMD5Signer(key string) Signer {
+	return newSigner(key, md5.New)
+}
+
+// NewSHA1Signer creates a new Signer with the given key using the SHA1 hash function.
+func NewSHA1Signer(key string) Signer {
+	return newSigner(key, sha1.New)
+}
+
+// NewSHA256Signer creates a new Signer with the given key using the SHA256 hash function.
+func NewSHA256Signer(key string) Signer {
+	return newSigner(key, sha256.New)
+}
+
+// NewSHA512Signer creates a new Signer with the given key using the SHA512 hash function.
+func NewSHA512Signer(key string) Signer {
+	return newSigner(key, sha512.New)
+}
+
+func newSigner(key string, hashFunc func() hash.Hash) Signer {
+	return &GenericSigner{
+		key:      []byte(key),
+		hashFunc: hashFunc,
+	}
 }
 
 func (gs *GenericSigner) b64Encode(message []byte) string {
@@ -34,7 +67,7 @@ func (gs *GenericSigner) b64Decode(message string) ([]byte, error) {
 }
 
 func (gs *GenericSigner) computeSignature(message string) []byte {
-	h := hmac.New(sha1.New, gs.key)
+	h := hmac.New(gs.hashFunc, gs.key)
 	h.Write([]byte(message))
 	return h.Sum(nil)
 }

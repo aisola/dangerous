@@ -5,7 +5,8 @@ In today's crazy world of the Internet, untrusted environments are everywhere. H
 the wild? Sign it! Given a key that you know (and others don't), you can cryptographically sign your data and send it
 into the wild. When you get the data back, you can easily check that the data wasn't changed.
 
-Internally, dangerous uses HMAC and SHA1 for signing by default.
+Internally, dangerous uses HMAC and SHA1 for signing by default. You have the ability to create signers with MD5, SHA1,
+SHA256, and SHA512. 
 
 **This software is considered unstable and should be used as such. The API may change at any time.** 
 
